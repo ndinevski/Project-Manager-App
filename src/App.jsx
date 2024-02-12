@@ -14,6 +14,9 @@ function App() {
 
   const handleCreatePress = () => {
     setCreatingProject(true);
+    if(selectedProject) {
+      setSelectedProject(null);
+    }
   }
 
   const handleHomePress = () => {
@@ -31,6 +34,9 @@ function App() {
 
   const handleProjectPress = (project) => {
     setSelectedProject(project);
+    if (creatingProject) {
+      setCreatingProject(false);
+    }
   }
 
   const handleDeletePress = (project) => {
@@ -40,11 +46,33 @@ function App() {
     setSelectedProject(null);
   }
 
+  const addTaskToProject = (project, task) => {
+    setProjects( (prevProjects) => 
+      prevProjects.map((p) =>{
+        if(p.title === project.title){
+          p.tasks.push(task);
+        }
+        return p;
+      })
+    );
+  }
+
+  const removeTaskFromProject = (project, task) => {
+    setProjects( (prevProjects) => 
+      prevProjects.map((p) =>{
+        if(p.title === project.title){
+          p.tasks = p.tasks.filter((t) => t!== task);
+        }
+        return p;
+      })
+    );
+  }
+
   return (
     <>
       <div className="">
         <SideBar className="" handleHomePress={handleHomePress} handleCreatePress={handleCreatePress} handleProjectPress={handleProjectPress} projects={projects}/>
-        {(selectedProject!==null && !creatingProject) && <Project className="" handleDeletePress={handleDeletePress} project={selectedProject}/>}
+        {(selectedProject!==null && !creatingProject) && <Project className="" removeTaskFromProject={removeTaskFromProject} addTaskToProject={addTaskToProject} handleDeletePress={handleDeletePress} project={selectedProject}/>}
         {(selectedProject===null && creatingProject) && <CreateProject className="" handleHomePress={handleHomePress} handleCreate={handleCreate}/>}
         {(selectedProject===null && !creatingProject) && <StartScreen className="" handleCreatePress={handleCreatePress}/>}
       </div>
